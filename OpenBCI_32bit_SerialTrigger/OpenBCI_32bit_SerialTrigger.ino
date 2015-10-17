@@ -28,8 +28,6 @@
  *
  * This software is provided as-is with no promise of workability
  * Use at your own risk, wysiwyg.
-
-  Don't send serial unless the command to stop has passed down the radio chain!
  */
 
 #include <OBCI32_SD.h>
@@ -39,12 +37,10 @@
 
 
 //------------------------------------------------------------------------------
-//  << SD CARD BUSINESS >> has bee taken out. See OBCI_SD_LOG_CMRR
-//  SD_SS on pin 7 defined in OpenBCI library
+//  << SD CARD BUSINESS >>
 boolean SDfileOpen = false;
 char fileSize = '0';  // SD file size indicator
 int blockCounter = 0;
-boolean writeToSDonly = false;
 //------------------------------------------------------------------------------
 //  << OpenBCI BUSINESS >>
 boolean is_running = false;    // this flag is set in serialEvent on reciept of ascii prompt
@@ -87,10 +83,10 @@ void setup(void) {
 
   startFromScratch();     // initialize OpenBCI, read device IDs
   // set EITHER useAccel or useAux to true
-  // if you want both, you must set and clear one of the variables every sample 
+  // if you want both, you must set and clear one of the variables every sample
   OBCI.useAccel = false;  // option to add/remove accelerometer data to stream
   OBCI.useAux = true;     // option to add/remove auxiliary data to stream
-  
+
   // make an 'I'm alive' blink
   digitalWrite(LED,HIGH); delay(200);
   digitalWrite(LED,LOW); delay(100);
@@ -313,12 +309,6 @@ void getCommand(char token){
         if(SDfileOpen) stampSD(DEACTIVATE);       // time stamp the stop time
         if(OBCI.useAccel){OBCI.disable_accel();}  // shut down the accelerometer if you're using it
         stopRunning();
-        break;
-      case 'n':
-        Serial0.println("write data to SD card only");
-        if(SDfileOpen) {stampSD(ACTIVATE); writeToSDonly = true;}
-        OBCI.enable_accel(RATE_25HZ);      // fire up the accelerometer
-        startRunning(outputType);       // turn on the fire hose
         break;
       case 'f':
          useFilters = true;
