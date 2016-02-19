@@ -91,7 +91,9 @@ void setup(void) {
   digitalWrite(LED,HIGH); delay(200);
   digitalWrite(LED,LOW); delay(100);
   digitalWrite(LED,HIGH); delay(200);
-  digitalWrite(LED,LOW);
+  digitalWrite(LED,LOW); delay(100);
+  digitalWrite(LED,HIGH);
+  // LED will remain high, and blink low when a the serial trigger is received.
 }
 
 
@@ -116,7 +118,7 @@ void loop() {
 
   if(serialTrigger){
      if((millis() - triggerTimer) > 500){
-       digitalWrite(LED,LOW);
+       digitalWrite(LED,HIGH);
        serialTrigger = false;
      }
   }
@@ -251,7 +253,7 @@ void getCommand(char token){
 
 //  SERIAL TRIGGER COMMANDS
       case '`':
-        digitalWrite(LED,HIGH);
+        digitalWrite(LED,LOW);
         OBCI.auxData[0] = OBCI.auxData[1] = OBCI.auxData[2] = 0x6220;
         addAuxToSD = true;
         serialTrigger = true;
